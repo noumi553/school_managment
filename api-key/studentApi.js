@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const model = require('../schema/schema');
 const studentApi = express.Router();
+const cors = require("cors");
 const SECRET_KEY = "2022kkkuk349@/";
 
 studentApi.get('/', async (req, res) => {
