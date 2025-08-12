@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Student Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: black;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Control Pinel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    </li>
+                    <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="studentMark">Student Marks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="examDateSheet">Add Exam Date Sheet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <section id="addMarks">
+        <div class="container mt-5">
+            <h2 class="mb-4 text-center">Add Student Marks</h2>
+
+            <div class="table-responsive">
+                <form id="studentForm" class="needs-validation" action="/mark" method="POST">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Field</th>
+                                <th>Input</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Title</td>
+                                <td><input type="text" class="form-control" placeholder="Add the title e.g: First term" id="studentName" name="title" required></td>
+                            </tr>
+                            <tr>
+                                <td>Full Name</td>
+                                <td><input type="text" class="form-control" id="studentName" name="name" required></td>
+                            </tr>
+                            <tr>
+                                <td>Roll Number</td>
+                                <td><input type="text" class="form-control" id="rollNumber" name="rollNumber" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>English</td>
+                                <td><input type="number" class="form-control" id="english" name="english"></td>
+                            </tr>
+                            <tr>
+                                <td>Urdu</td>
+                                <td><input type="number" class="form-control" id="urdu" name="urdu"></td>
+                            </tr>
+                            <tr>
+                                <td>Pak Study</td>
+                                <td><input type="number" class="form-control" id="pakStudy" name="pakStudy"></td>
+                            </tr>
+                            <tr>
+                                <td>Islamyat</td>
+                                <td><input type="number" class="form-control" id="islamyat" name="islamyat"></td>
+                            </tr>
+                            <tr>
+                                <td>Maths</td>
+                                <td><input type="number" class="form-control" id="maths" name="maths"></td>
+                            </tr>
+                            <tr>
+                                <td>Science</td>
+                                <td><input type="number" class="form-control" id="english" name="science"></td>
+                            </tr>
+                            <tr>
+                                <td>Biology</td>
+                                <td><input type="number" class="form-control" id="biology" name="biology"></td>
+                            </tr>
+                            <tr>
+                                <td>Physics</td>
+                                <td><input type="number" class="form-control" id="physics" name="physics"></td>
+                            </tr>
+                            <tr>
+                                <td>Chemistry</td>
+                                <td><input type="number" class="form-control" id="chemistry" name="chemistry"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <footer class="bg-dark text-white text-center py-3 mt-5">
+            &copy; 2025 School Management System. All Rights Reserved.
+        </footer>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

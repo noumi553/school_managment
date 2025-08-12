@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class Fee Structure</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .table-fees {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-fees thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .fee-header {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">School Fee Structure</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h3 class="fee-header">Admission and Monthly Fees by Class</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-fees">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Admission Fee</th>
+                        <th>Monthly Fee</th>
+                    </tr>
+                </thead>
+                <tbody id="feeTableBody">
+                    <!-- Fee rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for classes and fees
+        const classFees = [
+            { className: "Nursery", admissionFee: 5000, monthlyFee: 1000 },
+            { className: "Prep", admissionFee: 6000, monthlyFee: 1200 },
+            { className: "1", admissionFee: 7000, monthlyFee: 1500 },
+            { className: "2", admissionFee: 7000, monthlyFee: 1500 },
+            { className: "3", admissionFee: 7500, monthlyFee: 1600 },
+            { className: "4", admissionFee: 7500, monthlyFee: 1600 },
+            { className: "5", admissionFee: 8000, monthlyFee: 1700 },
+            { className: "6", admissionFee: 8000, monthlyFee: 1800 },
+            { className: "7", admissionFee: 8500, monthlyFee: 1900 },
+            { className: "8", admissionFee: 8500, monthlyFee: 2000 },
+            { className: "9", admissionFee: 9000, monthlyFee: 2200 },
+            { className: "10", admissionFee: 9000, monthlyFee: 2500 },
+        ];
+
+        const tableBody = document.getElementById('feeTableBody');
+
+        classFees.forEach(fee => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+        <td>Class ${fee.className}</td>
+        <td>Rs. ${fee.admissionFee.toLocaleString()}</td>
+        <td>Rs. ${fee.monthlyFee.toLocaleString()}</td>
+      `;
+            tableBody.appendChild(row);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

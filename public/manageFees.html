@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Fees Status</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Control Pinel</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h3>Student Fees by Month</h3>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by Name, Roll Number, or Class">
+            </div>
+            <div class="col-md-6">
+                <select id="classSelect" class="form-select">
+                    <option value="All">All Classes</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="studentsContainer"></div>
+    </div>
+
+    <script>
+        let allStudents = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('http://localhost:4000/studentProfile');
+                allStudents = await res.json();
+                populateClassOptions(allStudents);
+                renderTable();
+            } catch (err) {
+                console.error('Fetch error:', err);
+                document.getElementById('studentsContainer').innerHTML =
+                    '<div class="alert alert-danger">Failed to load data.</div>';
+            }
+
+            document.getElementById('searchInput').addEventListener('input', renderTable);
+            document.getElementById('classSelect').addEventListener('change', renderTable);
+        });
+
+        function populateClassOptions(students) {
+            const classSelect = document.getElementById('classSelect');
+            const uniqueClasses = [...new Set(students.map(s => s.class || 'Unknown'))];
+            uniqueClasses.sort();
+
+            uniqueClasses.forEach(cls => {
+                const option = document.createElement('option');
+                option.value = cls;
+                option.textContent = `Class ${cls}`;
+                classSelect.appendChild(option);
+            });
+        }
+
+        function renderTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedClass = document.getElementById('classSelect').value;
+            const container = document.getElementById('studentsContainer');
+            container.innerHTML = '';
+
+            const filteredStudents = allStudents.filter(student => {
+                const matchesSearch =
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.rollNumber.toLowerCase().includes(searchTerm) ||
+                    student.class.toLowerCase().includes(searchTerm);
+
+                const matchesClass = selectedClass === 'All' || student.class === selectedClass;
+                return matchesSearch && matchesClass;
+            });
+
+            if (filteredStudents.length === 0) {
+                container.innerHTML = `<div class="alert alert-warning">No matching students found.</div>`;
+                return;
+            }
+
+            const grouped = {};
+            filteredStudents.forEach(student => {
+                const studentClass = student.class || 'Unknown';
+                if (!grouped[studentClass]) grouped[studentClass] = [];
+                grouped[studentClass].push(student);
+            });
+
+            for (const [className, studentList] of Object.entries(grouped)) {
+                const table = document.createElement('table');
+                table.className = 'table table-bordered mb-3';
+
+                const monthOptions = `
+                    <select class="form-select month-select">
+                        <option value="January 2025">January 2025</option>
+                        <option value="February 2025">February 2025</option>
+                        <option value="March 2025">March 2025</option>
+                        <option value="April 2025">April 2025</option>
+                        <option value="May 2025">May 2025</option>
+                        <option value="June 2025">June 2025</option>
+                        <option value="July 2025">July 2025</option>
+                        <option value="August 2025">August 2025</option>
+                        <option value="September 2025">September 2025</option>
+                        <option value="October 2025">October 2025</option>
+                        <option value="November 2025">November 2025</option>
+                        <option value="December 2025">December 2025</option>
+                    </select>`;
+
+                const thead = `
+                    <thead class="table-dark">
+                        <tr>
+                            <th colspan="8">Class: ${className}</th>
+                        </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Father Name</th>
+                            <th>Phone</th>
+                            <th>Fees Status</th>
+                            <th>Month</th>
+                            <th>Class</th>
+                            <th>Select Month</th>
+                        </tr>
+                    </thead>`;
+
+                let tbody = '<tbody>';
+                studentList.forEach(student => {
+                    const selectedMonth = "January 2025";
+                    const feeForMonth = student.fees?.find(fee => fee.month === selectedMonth);
+                    const status = feeForMonth ? feeForMonth.feesStatus : 'Unpaid';
+                    const bgColorClass = status === 'Paid' ? 'table-success' :
+                        status === 'Unpaid' ? 'table-danger' : '';
+
+                    tbody += `
+                        <tr class="${bgColorClass}" data-student='${JSON.stringify(student).replace(/'/g, "&apos;")}'>
+                            <td>${student.name}</td>
+                            <td>${student.rollNumber}</td>
+                            <td>${student.fatherName}</td>
+                            <td>${student.phone || 'N/A'}</td>
+                            <td class="feesStatus">${status}</td>
+                            <td class="feesMonth">${feeForMonth ? feeForMonth.month : selectedMonth}</td>
+                            <td>${student.class}</td>
+                            <td>${monthOptions}</td>
+                        </tr>`;
+                });
+                tbody += '</tbody>';
+                table.innerHTML = thead + tbody;
+
+                // Responsive wrapper
+                const tableWrapper = document.createElement('div');
+                tableWrapper.className = 'table-responsive mb-4';
+                tableWrapper.appendChild(table);
+                container.appendChild(tableWrapper);
+            }
+
+            setupMonthChangeListeners();
+        }
+
+        function setupMonthChangeListeners() {
+            document.querySelectorAll('.month-select').forEach(select => {
+                select.addEventListener('change', function () {
+                    const selectedMonth = this.value;
+                    const row = this.closest('tr');
+                    const student = JSON.parse(row.getAttribute('data-student').replace(/&apos;/g, "'"));
+
+                    const fee = student.fees?.find(fee => fee.month === selectedMonth);
+                    const statusCell = row.querySelector('.feesStatus');
+                    const monthCell = row.querySelector('.feesMonth');
+
+                    const status = fee ? fee.feesStatus : 'Unpaid';
+                    statusCell.textContent = status;
+                    monthCell.textContent = fee ? fee.month : selectedMonth;
+
+                    row.classList.remove('table-success', 'table-danger');
+
+                    if (status === 'Paid') row.classList.add('table-success');
+                    else if (status === 'Unpaid') row.classList.add('table-danger');
+                });
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Date Sheet by Class</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Exam Date Sheet</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="mb-3">
+            <label for="classSelect" class="form-label fw-bold">Select Class</label>
+            <select id="classSelect" class="form-select">
+                <option value="">-- Select Class --</option>
+                <option value="one">Class one</option>
+                <option value="two">Class two</option>
+                <option value="three">Class three</option>
+                <option value="four">Class four</option>
+                <option value="five">Class five</option>
+                <option value="six">Class six</option>
+                <option value="seven">Class seven</option>
+                <option value="eight">Class eight</option>
+                <option value="nine">Class nine</option>
+                <option value="ten">Class ten</option>
+            </select>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dateSheetTable" style="display:none;">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Class</th>
+                        <th>Teacher Name</th>
+                        <th>Paper Style</th>
+                    </tr>
+                </thead>
+                <tbody id="dateSheetBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let allDateSheets = [];
+        console.log(allDateSheets)
+
+        fetch('http://localhost:4000/dateSheetTable')
+            .then(res => res.json())
+            .then(data => {
+                allDateSheets = data;
+            })
+            .catch(err => {
+                console.error('Failed to load date sheet:', err);
+                document.getElementById('dateSheetBody').innerHTML = '<tr><td colspan="5" class="text-danger text-center">Error loading date sheet</td></tr>';
+                document.getElementById('dateSheetTable').style.display = 'table';
+            });
+
+        document.getElementById('classSelect').addEventListener('change', function () {
+            const selectedClass = this.value;
+            const tbody = document.getElementById('dateSheetBody');
+            tbody.innerHTML = '';
+
+            if (!selectedClass) {
+                document.getElementById('dateSheetTable').style.display = 'none';
+                return;
+            }
+
+            const filtered = allDateSheets.filter(entry => entry.class === selectedClass);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-warning text-center">No date sheet for selected class.</td></tr>';
+            } else {
+                filtered.forEach(entry => {
+                    const date = new Date(entry.date).toLocaleDateString();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${entry.subject}</td>
+                            <td>${entry.time}</td>
+                            <td>${entry.class}</td>
+                            <td>${entry.teacherName}</td>
+                            <td>${entry.style}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('dateSheetTable').style.display = 'table';
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

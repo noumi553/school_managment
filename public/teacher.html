@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Teacher Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Admin Control Pinel</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="mb-4 text-center">Teacher List</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Father Name</th>
+                    <th>Village</th>
+                    <th>Subject</th>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Auth Email</th>
+                    <th>Password</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="teacherTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="updateForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Teacher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="updateId">
+                <div class="mb-3"><input class="form-control" id="updateName" placeholder="Name" required></div>
+                <div class="mb-3"><input class="form-control" id="updateSubject" placeholder="Subject" required></div>
+                <div class="mb-3"><input class="form-control" id="updatePhone" placeholder="Phone" required></div>
+                <div class="mb-3"><input class="form-control" id="updateAuthEmail" placeholder="Auth Email" required></div>
+                <div class="mb-3"><input class="form-control" id="updatePassword" placeholder="Password" required></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">Update</button>
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const tableBody = document.getElementById('teacherTableBody');
+    const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+
+    async function fetchTeachers() {
+        const res = await fetch('/teacherProfile');
+        const data = await res.json();
+        tableBody.innerHTML = '';
+        data.forEach((t, i) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>
+                    ${t.auth?.image?.imagePath ? `<img src="${t.auth.image.imagePath}" width="40" height="40">` : 'No Image'}
+                </td>
+                <td>${t.name}</td>
+                <td>${t.fatherName}</td>
+                <td>${t.village}</td>
+                <td>${t.subject}</td>
+                <td>${t.id}</td>
+                <td>${t.email}</td>
+                <td>${t.phone}</td>
+                <td>${t.auth?.email || '-'}</td>
+                <td>${t.auth?.password || '-'}</td>
+                
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="openUpdateModal('${t._id}', '${t.name}', '${t.subject}', '${t.phone}', '${t.auth?.email}', '${t.auth?.password}')">Update</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteTeacher('${t._id}')">Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function openUpdateModal(id, name, subject, phone, authEmail, password) {
+        document.getElementById('updateId').value = id;
+        document.getElementById('updateName').value = name;
+        document.getElementById('updateSubject').value = subject;
+        document.getElementById('updatePhone').value = phone;
+        document.getElementById('updateAuthEmail').value = authEmail;
+        document.getElementById('updatePassword').value = password;
+        updateModal.show();
+    }
+
+    document.getElementById('updateForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const id = document.getElementById('updateId').value;
+        const updated = {
+            name: document.getElementById('updateName').value,
+            subject: document.getElementById('updateSubject').value,
+            phone: document.getElementById('updatePhone').value,
+            auth: {
+                email: document.getElementById('updateAuthEmail').value,
+                password: document.getElementById('updatePassword').value
+            }
+        };
+        const res = await fetch(`/teacherProfile/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updated)
+        });
+        if (res.ok) {
+            alert("Updated");
+            updateModal.hide();
+            fetchTeachers();
+        } else alert("Update failed");
+    });
+
+    async function deleteTeacher(id) {
+        if (confirm("Delete this teacher?")) {
+            const res = await fetch(`/teacherProfile/${id}`, { method: 'DELETE' });
+            if (res.ok) fetchTeachers();
+            else alert("Delete failed");
+        }
+    }
+
+    fetchTeachers();
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fee Status</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .fee-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-unpaid {
+            color: red;
+            font-weight: bold;
+        }
+
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #000000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .modern-table th {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+
+        .modern-table td {
+            text-align: center;
+        }
+
+        .modern-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">Student Fee Status</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Student Info -->
+        <div id="studentInfo" class="fee-card mb-4 text-center">
+            <img id="studentImage" class="profile-img mb-2" src="default.png" alt="Student Image" />
+            <h4 id="studentName"></h4>
+            <p><strong>Father Name:</strong> <span id="fatherName"></span></p>
+            <p><strong>Class:</strong> <span id="className"></span></p>
+            <p><strong>Roll Number:</strong> <span id="rollNumber"></span></p>
+        </div>
+
+        <!-- Fee Table -->
+        <div class="fee-card mb-4">
+            <h5 class="mb-3 text-center">Monthly Fee Status - 2025</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered modern-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feeTableBody">
+                        <!-- Dynamic fee rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        &copy; 2025 Bright Future School. All rights reserved.
+    </footer>
+
+    <script>
+        const monthsList = [
+            "January 2025", "February 2025", "March 2025", "April 2025",
+            "May 2025", "June 2025", "July 2025", "August 2025",
+            "September 2025", "October 2025", "November 2025", "December 2025"
+        ];
+
+        let studentFees = [];
+
+        fetch('http://localhost:4000/studentApi', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            // Set image, name, father name, class, roll number
+            document.getElementById('studentImage').src = data.signup?.image?.imagePath || 'default.png';
+            document.getElementById('studentName').textContent = data.name;
+            document.getElementById('fatherName').textContent = data.fatherName;
+            document.getElementById('className').textContent = data.class;
+            document.getElementById('rollNumber').textContent = data.rollNumber;
+
+            studentFees = data.fees || [];
+
+            populateFeeTable();
+        })
+        .catch(err => {
+            console.error('Failed to fetch student data:', err);
+            alert('Failed to load student data');
+        });
+
+        function populateFeeTable() {
+            const feeTableBody = document.getElementById('feeTableBody');
+            feeTableBody.innerHTML = '';
+
+            monthsList.forEach(month => {
+                const feeRecord = studentFees.find(f => f.month === month);
+                const status = feeRecord ? feeRecord.feesStatus : 'Unpaid';
+                const statusClass = status === 'Paid' ? 'status-paid' : 'status-unpaid';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td class="${statusClass}">${status}</td>
+                `;
+                feeTableBody.appendChild(row);
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

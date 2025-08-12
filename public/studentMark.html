@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Student Marks</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Control Pinel</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <select id="select" class="form-select mb-3">
+            <option value="one">Class one</option>
+            <option value="two">Class two</option>
+            <option value="three">Class three</option>
+            <option value="four">Class four</option>
+            <option value="five">Class five</option>
+            <option value="six">Class six</option>
+            <option value="seven">Class seven</option>
+            <option value="eight">Class eight</option>
+            <option value="nine">Class nine</option>
+            <option value="ten">Class ten</option>
+        </select>
+
+        <div id="studentData">Loading student data...</div>
+    </div>
+
+    <!-- Update Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="updateForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">Update Student</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="studentId">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>Name</label>
+                                <input type="text" id="name" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Roll Number</label>
+                                <input type="text" id="rollNumber" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>English</label>
+                                <input type="text" id="english" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Urdu</label>
+                                <input type="text" id="urdu" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Pak Study</label>
+                                <input type="text" id="pakStudy" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>Islamyat</label>
+                                <input type="text" id="islamyat" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Maths</label>
+                                <input type="text" id="maths" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Biology</label>
+                                <input type="text" id="biology" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>Physics</label>
+                                <input type="text" id="physics" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>Chemistry</label>
+                                <input type="text" id="chemistry" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const select = document.getElementById('select');
+        const studentDataDiv = document.getElementById('studentData');
+        let allStudents = [];
+        console.log(allStudents)
+        fetch('http://localhost:4000/studentProfile')
+            .then(res => res.json())
+            .then(data => {
+                allStudents = data; // now it's set              
+                allStudents.push(data)
+                renderStudentsByClass(select.value);
+            })
+            .catch(error => {
+                console.error('Error fetching student profiles:', error);
+                studentDataDiv.innerText = 'Failed to load student data.';
+            });
+
+        function renderStudentsByClass(selectedClass) {
+            const filtered = allStudents.filter(student => student.class === selectedClass);
+
+            if (filtered.length === 0) {
+                studentDataDiv.innerText = 'No students found for Class ' + selectedClass;
+                return;
+            }
+
+            let tableHTML = `
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Roll Number</th>
+                                <th>Class</th>
+                                <th>English</th>
+                                <th>Urdu</th>
+                                <th>Pak Study</th>
+                                <th>Islamyat</th>
+                                <th>Math</th>
+                                <th>Biology</th>
+                                <th>Physics</th>
+                                <th>Chemistry</th>
+                                <th>Percentage</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            filtered.forEach(student => {
+                console.log("student",student)
+                const m = student.mark || {};
+                console.log("student",m[0].urdu)
+                const totalMarks =
+                    parseFloat(student.mark.english || 0) +
+                    parseFloat(m[0].urdu || 0) +
+                    parseFloat(m[0].pakStudy || 0) +
+                    parseFloat(m[0].islamyat || 0) +
+                    parseFloat(m[0].maths || 0) +
+                    parseFloat(m[0].biology || 0) +
+                    parseFloat(m[0].physics || 0) +
+                    parseFloat(m[0].chemistry || 0);
+
+                const percentage = ((totalMarks / 800) * 100).toFixed(2);
+
+                tableHTML += `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.rollNumber}</td>
+                        <td>${student.class}</td>
+                        <td>${m[0].english || 0}</td>
+                        <td>${m[0].urdu || 0}</td>
+                        <td>${m[0].pakStudy || 0}</td>
+                        <td>${m[0].islamyat || 0}</td>
+                        <td>${m[0].maths || 0}</td>
+                        <td>${m[0].biology || 0}</td>
+                        <td>${m[0].physics || 0}</td>
+                        <td>${m[0].chemistry || 0}</td>
+                        <td>${percentage}%</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2" onclick="openUpdateModal('${student._id}')">Update</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `</tbody></table></div>`;
+            studentDataDiv.innerHTML = tableHTML;
+        }
+
+        select.addEventListener('change', () => {
+            renderStudentsByClass(select.value);
+        });
+
+        function openUpdateModal(studentId) {
+            const student = allStudents.find(s => s._id === studentId);
+            if (!student) return;
+
+            const m = student.mark || {};
+
+            document.getElementById('studentId').value = student._id;
+            document.getElementById('name').value = student.name;
+            document.getElementById('rollNumber').value = student.rollNumber;
+            document.getElementById('english').value = m[0].english || '';
+            document.getElementById('urdu').value = m[0].urdu || '';
+            document.getElementById('pakStudy').value = m[0].pakStudy || '';
+            document.getElementById('islamyat').value = m[0].islamyat || '';
+            document.getElementById('maths').value = m[0].maths || '';
+            document.getElementById('biology').value = m[0].biology || '';
+            document.getElementById('physics').value = m[0].physics || '';
+            document.getElementById('chemistry').value = m[0].chemistry || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('updateModal'));
+            modal.show();
+        }
+
+        document.getElementById('updateForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+
+            const updatedData = {
+                name: document.getElementById('name').value,
+                rollNumber: document.getElementById('rollNumber').value,
+                mark: {
+                    english: document.getElementById('english').value,
+                    urdu: document.getElementById('urdu').value,
+                    pakStudy: document.getElementById('pakStudy').value,
+                    islamyat: document.getElementById('islamyat').value,
+                    maths: document.getElementById('maths').value,
+                    biology: document.getElementById('biology').value,
+                    physics: document.getElementById('physics').value,
+                    chemistry: document.getElementById('chemistry').value
+                }
+            };
+
+            fetch(`http://localhost:4000/update/${studentId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            })
+                .then(res => res.json())
+                .then(() => {
+                    alert('Update successful!');
+                    return fetch('http://localhost:4000/studentProfile');
+                })
+                .then(res => res.json())
+                .then(data => {
+                    allStudents = data;
+                    renderStudentsByClass(select.value);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+                    modal.hide();
+                })
+                .catch(err => {
+                    console.error('Update failed:', err);
+                    alert('Update failed');
+                });
+        });
+    </script>
+</body>
+
+</html>

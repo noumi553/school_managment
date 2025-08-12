@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Homework Submission</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f6fa;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Add Homework</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header text-center">Assign Homework</div>
+            <form action="/homeworks" method="POST">
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Topic</label>
+                    <input type="text" class="form-control" id="topic" name="topic" placeholder="Enter topic name"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="teacherName" class="form-label">Your Name</label>
+                    <input type="text" class="form-control" id="teacherName" name="teacherName"
+                        placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="teacherName" class="form-label">Your ID</label>
+                    <input type="text" class="form-control" id="teacherName" name="id"
+                        placeholder="Enter your ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Subject Name</label>
+                    <input type="text" class="form-control" id="topic" name="subjectName"
+                        placeholder="Enter subject name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="teacherName" class="form-label">Class</label>
+                    <input type="text" class="form-control" id="teacherName" name="className"
+                        placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Comment</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="4"
+                        placeholder="Enter any instructions or comments..."></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-5">Submit Homework</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

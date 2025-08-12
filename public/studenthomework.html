@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Homework</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Homework</a>
+        </div>
+    </nav>
+    <div class="container">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Class</th>
+                    <th>Teacher</th>
+                    <th>Topic</th>
+                    <th>Subject</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody id="homeworkTable">
+                <!-- Homework rows will go here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadHomework() {
+            try {
+                // First, get student data
+                const studentRes = await fetch('http://localhost:4000/studentApi');
+                const studentData = await studentRes.json();
+
+                // Assuming your API returns an object like { class: "four" }
+                // or an array of students
+                let studentClass = "";
+                if (Array.isArray(studentData) && studentData.length > 0) {
+                    studentClass = studentData[0].className || studentData[0].class || "";
+                } else {
+                    studentClass = studentData.class || "";
+                }
+
+                // Then get homework
+                const homeworkRes = await fetch('http://localhost:4000/homeworkget');
+                const homeworkData = await homeworkRes.json();
+
+                // Filter homework by student's class
+                const filteredHomework = homeworkData.filter(hw => hw.className === studentClass);
+
+                // Render in table
+                const tableBody = document.getElementById("homeworkTable");
+                tableBody.innerHTML = "";
+                filteredHomework.forEach(hw => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${hw.className}</td>
+                            <td>${hw.teacherName}</td>
+                            <td>${hw.topic}</td>
+                            <td>${hw.subjectName}</td>
+                            <td>${hw.comment}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error loading homework:", err);
+            }
+        }
+
+        loadHomework();
+    </script>
+</body>
+
+</html>
