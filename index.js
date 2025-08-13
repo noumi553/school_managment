@@ -1,46 +1,46 @@
 const express = require('express')
-const connect = require('../connectionWithMdb/connect')
-const { home, image, studentSection, studentSignup, student, examSection, studentMarks, examDateSheet, feesSection, manageFees, teacherSection, teacherAccount, teacherdata, allhomework, studenthomework } = require('../api-key/home')
-const studentData = require('../api-key/studentData')
-const studentProfile = require('../api-key/studentProfile')
-const mark = require('../api-key/marks')
-const update = require('../api-key/update')
-const dateSheet = require('../api-key/dateSheet')
-const dateSheetTable = require('../api-key/dateSheetTable')
-const updateDateSheet = require('../api-key/updateDateSheet')
-const signup = require('../api-key/signup')
-const updatedata = require('../api-key/studentDataUpdate')
-const deletes = require('../api-key/delete')
-const fees = require('../api-key/fees')
+const connect = require('./connectionWithMdb/connect')
+const { home, image, studentSection, studentSignup, student, examSection, studentMarks, examDateSheet, feesSection, manageFees, teacherSection, teacherAccount, teacherdata, allhomework, studenthomework } = require('./api-key/home')
+const studentData = require('./api-key/studentData')
+const studentProfile = require('./api-key/studentProfile')
+const mark = require('./api-key/marks')
+const update = require('./api-key/update')
+const dateSheet = require('./api-key/dateSheet')
+const dateSheetTable = require('./api-key/dateSheetTable')
+const updateDateSheet = require('./api-key/updateDateSheet')
+const signup = require('./api-key/signup')
+const updatedata = require('./api-key/studentDataUpdate')
+const deletes = require('./api-key/delete')
+const fees = require('./api-key/fees')
 const cookiesParser = require('cookie-parser')
-const auth = require('../api-key/login')
-const authpage = require('../api-key/auth')
-const authMidleware = require('../midlwire/session')
-const teacher = require('../api-key/teacher')
+const auth = require('./api-key/login')
+const authpage = require('./api-key/auth')
+const authMidleware = require('./midlwire/session')
+const teacher = require('./api-key/teacher')
 const path = require('path')
-const teacherSignup = require('../api-key/teacherAccount')
-const teacherProfile = require('../api-key/teacherProfile')
-const teacherUpdate = require('../api-key/teacherProfileUpdate')
-const teacherDelete = require('../api-key/teacherDelete')
-const studentPortalSigin = require('../api-key/studentPortal')
-const { main, room, AcademicExcellence, BMCSS1, library, portal, teacherimage, studentimage, studentPortal, teacherPortal, studentdisplay, transcript, feesportal, feesStructure, examportal, teacherportals, homework } = require('../api-key/main')
-const authMidlewaretwo = require('../midlwire/sessiontwo')
-const studentApi = require('../api-key/studentApi')
-const studentlogout = require('../api-key/studentlogout')
-const authMidlewarethree = require('../midlwire/sessionthree')
-const teacherPortalSigin = require('../api-key/teacherprotal')
-const teacherlogout = require('../api-key/teacherlogout')
-const teacherdataget = require('../api-key/teacherlogin')
-const homeworks = require('../api-key/teacherhomework')
-const homeworkget = require('../api-key/displayhomeworl')
-const homeworkupdate = require('../api-key/homeworkupdate')
-const homeworkdelete = require('../api-key/homeworkdelete')
+const teacherSignup = require('./api-key/teacherAccount')
+const teacherProfile = require('./api-key/teacherProfile')
+const teacherUpdate = require('./api-key/teacherProfileUpdate')
+const teacherDelete = require('./api-key/teacherDelete')
+const studentPortalSigin = require('./api-key/studentPortal')
+const { main, room, AcademicExcellence, BMCSS1, library, portal, teacherimage, studentimage, studentPortal, teacherPortal, studentdisplay, transcript, feesportal, feesStructure, examportal, teacherportals, homework } = require('./api-key/main')
+const authMidlewaretwo = require('./midlwire/sessiontwo')
+const studentApi = require('./api-key/studentApi')
+const studentlogout = require('./api-key/studentlogout')
+const authMidlewarethree = require('./midlwire/sessionthree')
+const teacherPortalSigin = require('./api-key/teacherprotal')
+const teacherlogout = require('./api-key/teacherlogout')
+const teacherdataget = require('./api-key/teacherlogin')
+const homeworks = require('./api-key/teacherhomework')
+const homeworkget = require('./api-key/displayhomeworl')
+const homeworkupdate = require('./api-key/homeworkupdate')
+const homeworkdelete = require('./api-key/homeworkdelete')
 require('dotenv').config();
-const serverless = require("serverless-http");
+
 
 
 const app = express()
-const url = process.env.MONGO_URL
+const url = process.env.MONGO_URL || "mongodb+srv://noumanaziz383:Nouman123%21@cluster0.shnqyd4.mongodb.net/portfolioDB?retryWrites=true&w=majority&appName=Cluster0"
 console.log(url)
 
 connect(url)
@@ -50,6 +50,7 @@ app.use(cookiesParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 
 app.use('/submit', studentData)
 app.use('/studentProfile', studentProfile)
@@ -114,16 +115,11 @@ app.use('/teacherlogin', teacherPortalSigin)
 app.use('/teacherlogout', teacherlogout)
 app.use('/auth', auth)
 
-
+app.get("/api", (req, res) => {
+    res.json({ message: "Hello from Cloudflare Pages Functions" });
+});
 const PORT = process.env.PORT || 5000;
 
-if (process.env.CF_PAGES) {
-    module.exports = {
-        fetch: serverless(app)
-    };
-} else {
-    // Local development
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });
-}
