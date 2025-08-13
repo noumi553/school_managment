@@ -1,4 +1,12 @@
 {
+  "name": "school-management",
+  "version": "1.0.0",
+  "main": "nodemon app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "wrangler dev"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -7,6 +15,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.4",
     "multer": "^2.0.2",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "serverless": "^4.18.0",
+    "serverless-http": "^3.2.0"
   }
 }

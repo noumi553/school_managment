@@ -1,0 +1,8 @@
+name = "school-management"
+main = "worker.js"
+compatibility_date = "2025-08-12"
+node_compat = true
+
+[vars]
+MONGO_URL = "mongodb+srv://noumanaziz383:Nouman123%21@cluster0.shnqyd4.mongodb.net/portfolioDB?retryWrites=true&w=majority&appName=Cluster0"
+SECREAT_KEY = "2022kkkuk349@/"

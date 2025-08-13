@@ -152,7 +152,6 @@
             filtered.forEach(student => {
                 console.log("student",student)
                 const m = student.mark || {};
-                console.log("student",m[0].urdu)
                 const totalMarks =
                     parseFloat(student.mark.english || 0) +
                     parseFloat(m[0].urdu || 0) +

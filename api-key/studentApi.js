@@ -3,7 +3,12 @@ const jwt = require('jsonwebtoken');
 const model = require('../schema/schema');
 const studentApi = express.Router();
 const cors = require("cors");
-const SECRET_KEY = "2022kkkuk349@/";
+require('dotenv').config();
+const SECRET_KEY = process.env.secreat_key
+studentApi.use(cors({ origin: "*" }));
+const cookieParser = require("cookie-parser");
+studentApi.use(cookieParser());
+
 
 studentApi.get('/', async (req, res) => {
     try {
