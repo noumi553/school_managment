@@ -11,6 +11,6 @@ const login= new mongoose.Schema({
     }
 })
 
-const adminModel = mongoose.model('admin1',login) 
+const adminModel = mongoose.model('admin',login) 
 
 module.exports = adminModel
