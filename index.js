@@ -40,7 +40,7 @@ require('dotenv').config();
 
 
 const app = express()
-const url = process.env.MONGO_URL || "mongodb+srv://noumanaziz383:Nouman123%21@cluster0.shnqyd4.mongodb.net/portfolioDB?retryWrites=true&w=majority&appName=Cluster0"
+const url = "mongodb://noumanaziz383:noumanaziz123@ac-s3zj81d-shard-00-00.shnqyd4.mongodb.net:27017,ac-s3zj81d-shard-00-01.shnqyd4.mongodb.net:27017,ac-s3zj81d-shard-00-02.shnqyd4.mongodb.net:27017/portfolioDB?ssl=true&replicaSet=atlas-lnk297-shard-0&authSource=admin&appName=Cluster0"
 console.log(url)
 
 connect(url)
